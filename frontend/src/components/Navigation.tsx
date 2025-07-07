@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { motion } from "framer-motion";
 import { LayoutDashboard, TrendingUp, Heart, Activity, Store, Users, Sparkles } from "lucide-react";
 
 interface NavigationProps {
@@ -20,7 +18,6 @@ const navigationItems = [
 ];
 
 export default function Navigation({ activeTab, setActiveTab }: NavigationProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <motion.nav
