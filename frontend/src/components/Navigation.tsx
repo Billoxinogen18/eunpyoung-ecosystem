@@ -68,7 +68,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                 <motion.button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 group w-32 text-center`}
+                  className={`relative px-4 py-3 rounded-2xl font-semibold transition-all duration-300 group w-36 text-center`}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, y: 20 }}
@@ -102,11 +102,11 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                     />
                   )}
                   {/* Content */}
-                  <div className={`relative flex items-center space-x-2 ${
+                  <div className={`relative flex flex-col items-center justify-center space-y-1 ${
                     isActive ? item.lightColor : 'text-black group-hover:text-white'
                   } transition-colors duration-200`}>
-                    <IconComponent size={18} className={isActive ? item.lightColor : 'text-black group-hover:text-white'} />
-                    <span className="text-sm font-bold">{item.label}</span>
+                    <IconComponent size={20} className={isActive ? item.lightColor : 'text-black group-hover:text-white'} />
+                    <span className="text-xs font-semibold">{item.label}</span>
                   </div>
                 </motion.button>
               );
@@ -168,7 +168,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                     />
                   )}
                   {/* Content */}
-                  <div className={`relative flex flex-col items-center space-y-1 ${
+                  <div className={`relative flex flex-col items-center space-y-1 text-xs ${
                     isActive ? item.lightColor : 'text-black group-hover:text-white'
                   } transition-colors duration-200`}>
                     <IconComponent size={20} className={isActive ? item.lightColor : 'text-black group-hover:text-white'} />
