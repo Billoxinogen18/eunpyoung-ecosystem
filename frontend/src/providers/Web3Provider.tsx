@@ -40,11 +40,12 @@ const chains = [sepoliaWithRPC] as const;
 
 const wagmiConfig = getDefaultConfig({
   appName: "EunCoin Ecosystem",
-  projectId: "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6", // Valid format but placeholder
+  projectId: "12345678901234567890123456789012", // 32 char string
   chains,
   transports: {
     [sepolia.id]: http('https://eth-sepolia.g.alchemy.com/v2/demo'),
   },
+  ssr: true,
 });
 
 const queryClient = new QueryClient();

@@ -16,13 +16,19 @@ import Campaigns from "../components/Campaigns";
 import Card from "../components/ui/Card";
 
 export default function Home() {
-  const { isConnected, address } = useAccount();
+  const { isConnected, address, status } = useAccount();
   const [activeTab, setActiveTab] = useState("dashboard");
 
-  // Debug logging
+  // Enhanced debug logging
   useEffect(() => {
-    console.log("Wallet connection status:", { isConnected, address });
-  }, [isConnected, address]);
+    console.log("🔍 Connection Debug:", { 
+      isConnected, 
+      address, 
+      status,
+      hasAddress: !!address,
+      addressLength: address?.length 
+    });
+  }, [isConnected, address, status]);
 
   const renderContent = () => {
     if (!isConnected) {
@@ -62,6 +68,12 @@ export default function Home() {
             >
               <Card className="p-8">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6">Welcome to the Future of Regional Community</h2>
+                
+                {/* Debug info for connection */}
+                <div className="bg-gray-100 p-3 rounded mb-6 text-sm text-gray-600">
+                  <strong>Debug:</strong> Status: {status}, Connected: {isConnected ? 'Yes' : 'No'}, Address: {address ? `${address.slice(0,6)}...` : 'None'}
+                </div>
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                   <div className="text-left">
                     <h3 className="text-lg font-semibold text-blue-600 mb-2">🪙 EunCoin Features</h3>
@@ -152,19 +164,23 @@ export default function Home() {
         }}
       />
       
-      {/* Always show navigation when connected */}
-      {isConnected && (
+      {/* Force show navigation when connected - with debug */}
+      {(isConnected || address) && (
         <>
           <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
-          {/* Debug info */}
-          <div className="bg-green-100 p-2 text-xs text-center">
-            🟢 Wallet Connected: {address?.slice(0, 6)}...{address?.slice(-4)} | Active Tab: {activeTab}
+          {/* Enhanced Debug info */}
+          <div className="bg-green-100 p-2 text-xs text-center border-b">
+            🟢 Wallet Connected: {address?.slice(0, 6)}...{address?.slice(-4)} | 
+            Status: {status} | 
+            Connected: {isConnected ? 'TRUE' : 'FALSE'} | 
+            Active Tab: {activeTab} |
+            Time: {new Date().toLocaleTimeString()}
           </div>
         </>
       )}
       
-      <main className={`${isConnected ? 'pt-4' : ''}`}>
-        <div className={`${isConnected ? 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8' : ''}`}>
+      <main className={`${(isConnected || address) ? 'pt-4' : ''}`}>
+        <div className={`${(isConnected || address) ? 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8' : ''}`}>
           {renderContent()}
         </div>
       </main>
