@@ -157,7 +157,7 @@ export default function ActivityRewards() {
         {categories.map((category) => (
           <Button
             key={category}
-            variant={selectedCategory === category ? "primary" : "outline"}
+            variant={selectedCategory === category ? "primary" : "secondary"}
             size="sm"
             onClick={() => setSelectedCategory(category)}
           >

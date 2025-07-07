@@ -1,260 +1,436 @@
 "use client";
 
 import { useState } from "react";
-import { useAccount, useWriteContract, useReadContract } from "wagmi";
-import { parseEther, formatEther } from "viem";
 import { motion } from "framer-motion";
+import { useEunCoinBalance } from "../hooks/useTokenBalance";
+import { useStaking } from "../hooks/useStaking";
 import Card from "./ui/Card";
 import Button from "./ui/Button";
-import contracts from "../contracts.json";
 import toast from "react-hot-toast";
+import { TrendingUp, Users, Vote, Award, Lock, Unlock } from "lucide-react";
 
-const STAKING_ABI = [
-  {
-    inputs: [{ name: "amount", type: "uint256" }],
-    name: "stake",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ name: "amount", type: "uint256" }],
-    name: "withdraw",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [{ name: "account", type: "address" }],
-    name: "stakes",
-    outputs: [
-      { name: "amount", type: "uint256" },
-      { name: "timestamp", type: "uint256" }
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [{ name: "account", type: "address" }],
-    name: "pendingReward",
-    outputs: [{ name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function",
-  },
-] as const;
-
-const ERC20_ABI = [
-  {
-    inputs: [{ name: "spender", type: "address" }, { name: "amount", type: "uint256" }],
-    name: "approve",
-    outputs: [{ name: "", type: "bool" }],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-] as const;
+interface Proposal {
+  id: number;
+  title: string;
+  description: string;
+  votes: number;
+  deadline: string;
+  status: "active" | "passed" | "failed";
+  myVote?: "for" | "against" | null;
+}
 
 export default function StakingInterface() {
-  const { address } = useAccount();
+  const { balance: eunBalance } = useEunCoinBalance();
+  const { 
+    stakedBalance, 
+    earnedRewards, 
+    apr, 
+    totalStaked,
+    stake, 
+    withdraw, 
+    claimRewards, 
+    isTransacting 
+  } = useStaking();
+  
   const [stakeAmount, setStakeAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [activeTab, setActiveTab] = useState<"stake" | "dao">("stake");
 
-  const { writeContract, isPending } = useWriteContract();
-
-  // Read staking data
-  const { data: stakeData } = useReadContract({
-    address: contracts.EunStaking as `0x${string}`,
-    abi: STAKING_ABI,
-    functionName: "stakes",
-    args: address ? [address] : undefined,
-    query: { enabled: !!address },
-  });
-
-  const { data: pendingReward } = useReadContract({
-    address: contracts.EunStaking as `0x${string}`,
-    abi: STAKING_ABI,
-    functionName: "pendingReward",
-    args: address ? [address] : undefined,
-    query: { enabled: !!address },
-  });
-
-  const stakedAmount = stakeData ? formatEther(stakeData[0] as bigint) : "0";
-  const reward = pendingReward ? formatEther(pendingReward as bigint) : "0";
+  // Mock DAO proposals (these would come from a real DAO contract in production)
+  const [proposals] = useState<Proposal[]>([
+    {
+      id: 1,
+      title: "Increase Community Activity Rewards",
+      description: "Proposal to increase daily activity rewards from 10 EUN to 15 EUN to encourage more community participation.",
+      votes: 1247,
+      deadline: "2024-02-15",
+      status: "active",
+      myVote: null
+    },
+    {
+      id: 2,
+      title: "Add New Donation Category: Education",
+      description: "Create a new donation category specifically for educational initiatives in Eunpyeong-gu.",
+      votes: 892,
+      deadline: "2024-02-10",
+      status: "active",
+      myVote: "for"
+    },
+    {
+      id: 3,
+      title: "Reduce Staking Lock Period",
+      description: "Reduce the minimum staking period from 30 days to 14 days to improve liquidity.",
+      votes: 2156,
+      deadline: "2024-01-28",
+      status: "passed",
+      myVote: "for"
+    }
+  ]);
 
   const handleStake = async () => {
     if (!stakeAmount || parseFloat(stakeAmount) <= 0) {
-      toast.error("Please enter a valid stake amount");
+      toast.error("Please enter a valid amount");
       return;
     }
 
-    try {
-      // First approve the staking contract
-      await writeContract({
-        address: contracts.EunCoin as `0x${string}`,
-        abi: ERC20_ABI,
-        functionName: "approve",
-        args: [contracts.EunStaking as `0x${string}`, parseEther(stakeAmount)],
-      });
-
-      // Then stake
-      await writeContract({
-        address: contracts.EunStaking as `0x${string}`,
-        abi: STAKING_ABI,
-        functionName: "stake",
-        args: [parseEther(stakeAmount)],
-      });
-
-      toast.success("Staking successful!");
-      setStakeAmount("");
-    } catch (error) {
-      toast.error("Staking failed");
-      console.error(error);
+    if (parseFloat(stakeAmount) > eunBalance) {
+      toast.error("Insufficient EUN balance");
+      return;
     }
+
+    await stake(stakeAmount);
+    setStakeAmount("");
   };
 
   const handleWithdraw = async () => {
     if (!withdrawAmount || parseFloat(withdrawAmount) <= 0) {
-      toast.error("Please enter a valid withdrawal amount");
+      toast.error("Please enter a valid amount");
       return;
     }
 
-    try {
-      await writeContract({
-        address: contracts.EunStaking as `0x${string}`,
-        abi: STAKING_ABI,
-        functionName: "withdraw",
-        args: [parseEther(withdrawAmount)],
-      });
-
-      toast.success("Withdrawal successful!");
-      setWithdrawAmount("");
-    } catch (error) {
-      toast.error("Withdrawal failed");
-      console.error(error);
+    if (parseFloat(withdrawAmount) > stakedBalance) {
+      toast.error("Insufficient staked balance");
+      return;
     }
+
+    await withdraw(withdrawAmount);
+    setWithdrawAmount("");
   };
 
+  const handleClaimRewards = async () => {
+    if (earnedRewards <= 0) {
+      toast.error("No rewards to claim");
+      return;
+    }
+
+    await claimRewards();
+  };
+
+  const votingPower = stakedBalance > 0 ? (stakedBalance / totalStaked) * 100 : 0;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center"
       >
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Staking & DAO Governance</h2>
-        <p className="text-gray-600">Stake EunCoin to earn rewards and gain voting rights</p>
+        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-4">
+          🗳️ Staking & DAO
+        </h2>
+        <p className="text-gray-600 text-lg">
+          Stake EUN tokens to earn rewards and participate in governance
+        </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Staking Stats */}
-        <Card>
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">Your Staking</h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-              <span className="text-gray-600">Staked Amount</span>
-              <span className="font-semibold text-blue-600">{parseFloat(stakedAmount).toFixed(2)} EUN</span>
-            </div>
-            <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-              <span className="text-gray-600">Pending Rewards</span>
-              <span className="font-semibold text-green-600">{parseFloat(reward).toFixed(4)} EUN</span>
-            </div>
-            <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-              <span className="text-gray-600">APR</span>
-              <span className="font-semibold text-purple-600">10%</span>
-            </div>
-          </div>
-        </Card>
-
-        {/* Staking Actions */}
-        <Card>
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">Staking Actions</h3>
-          <div className="space-y-4">
-            {/* Stake */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Stake EunCoin
-              </label>
-              <div className="flex space-x-2">
-                <input
-                  type="number"
-                  value={stakeAmount}
-                  onChange={(e) => setStakeAmount(e.target.value)}
-                  placeholder="Amount to stake"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <Button onClick={handleStake} loading={isPending}>
-                  Stake
-                </Button>
-              </div>
-            </div>
-
-            {/* Withdraw */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Withdraw Staked EunCoin
-              </label>
-              <div className="flex space-x-2">
-                <input
-                  type="number"
-                  value={withdrawAmount}
-                  onChange={(e) => setWithdrawAmount(e.target.value)}
-                  placeholder="Amount to withdraw"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <Button onClick={handleWithdraw} variant="outline" loading={isPending}>
-                  Withdraw
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Card>
+      {/* Tab Navigation */}
+      <div className="flex justify-center">
+        <div className="bg-gray-100 p-1 rounded-2xl">
+          <button
+            onClick={() => setActiveTab("stake")}
+            className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+              activeTab === "stake"
+                ? "bg-white text-purple-600 shadow-lg"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            <Lock className="w-4 h-4 inline mr-2" />
+            Staking
+          </button>
+          <button
+            onClick={() => setActiveTab("dao")}
+            className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+              activeTab === "dao"
+                ? "bg-white text-purple-600 shadow-lg"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            <Vote className="w-4 h-4 inline mr-2" />
+            DAO Governance
+          </button>
+        </div>
       </div>
 
-      {/* DAO Voting Section */}
-      <Card>
-        <h3 className="text-xl font-semibold text-gray-900 mb-4">🗳️ DAO Governance</h3>
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg">
-          <h4 className="text-lg font-semibold text-gray-900 mb-2">Active Proposals</h4>
-          <div className="space-y-3">
-            <div className="bg-white p-4 rounded-lg shadow-sm border">
-              <div className="flex justify-between items-start mb-2">
-                <h5 className="font-medium text-gray-900">Increase Staking APR to 15%</h5>
-                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Active</span>
-              </div>
-              <p className="text-sm text-gray-600 mb-3">
-                Proposal to increase the annual percentage rate from 10% to 15% to incentivize more staking participation.
-              </p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 text-sm">
-                  <span className="text-green-600">✓ 2,450 votes (73%)</span>
-                  <span className="text-red-600">✗ 900 votes (27%)</span>
+      {activeTab === "stake" && (
+        <>
+          {/* Staking Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 opacity-5" />
+              <div className="relative p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="p-3 bg-purple-100 rounded-2xl">
+                    <TrendingUp className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Staked Balance</h3>
+                    <p className="text-sm text-gray-600">Your staked EUN</p>
+                  </div>
                 </div>
-                <Button size="sm" disabled={parseFloat(stakedAmount) === 0}>
-                  {parseFloat(stakedAmount) === 0 ? "Stake to Vote" : "Vote"}
+                <div className="text-3xl font-bold text-gray-900 mb-2">
+                  {stakedBalance.toLocaleString()} EUN
+                </div>
+                <p className="text-sm text-purple-600 font-medium">
+                  Earning {apr.toFixed(1)}% APR
+                </p>
+              </div>
+            </Card>
+
+            <Card className="relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-500 opacity-5" />
+              <div className="relative p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="p-3 bg-green-100 rounded-2xl">
+                    <Award className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Earned Rewards</h3>
+                    <p className="text-sm text-gray-600">Available to claim</p>
+                  </div>
+                </div>
+                <div className="text-3xl font-bold text-gray-900 mb-2">
+                  {earnedRewards.toLocaleString()} EUN
+                </div>
+                <Button
+                  size="sm"
+                  variant="success"
+                  onClick={handleClaimRewards}
+                  disabled={earnedRewards <= 0 || isTransacting}
+                  loading={isTransacting}
+                >
+                  Claim Rewards
                 </Button>
+              </div>
+            </Card>
+
+            <Card className="relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-cyan-500 opacity-5" />
+              <div className="relative p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="p-3 bg-blue-100 rounded-2xl">
+                    <Users className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Total Staked</h3>
+                    <p className="text-sm text-gray-600">Network total</p>
+                  </div>
+                </div>
+                <div className="text-3xl font-bold text-gray-900 mb-2">
+                  {totalStaked.toLocaleString()} EUN
+                </div>
+                <p className="text-sm text-blue-600 font-medium">
+                  Your share: {votingPower.toFixed(2)}%
+                </p>
+              </div>
+            </Card>
+          </div>
+
+          {/* Staking Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Stake EUN */}
+            <Card className="p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <Lock className="w-6 h-6 mr-3 text-purple-600" />
+                Stake EUN
+              </h3>
+              
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Amount to Stake
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={stakeAmount}
+                      onChange={(e) => setStakeAmount(e.target.value)}
+                      placeholder="0.0"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                    <div className="absolute right-3 top-3 text-sm text-gray-500">
+                      EUN
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center mt-2 text-sm">
+                    <span className="text-gray-600">
+                      Available: {eunBalance.toLocaleString()} EUN
+                    </span>
+                    <button
+                      onClick={() => setStakeAmount(eunBalance.toString())}
+                      className="text-purple-600 hover:text-purple-700 font-medium"
+                    >
+                      Max
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-purple-50 p-4 rounded-xl">
+                  <h4 className="font-semibold text-gray-900 mb-2">Staking Benefits:</h4>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    <li>• Earn {apr.toFixed(1)}% APR on staked tokens</li>
+                    <li>• Participate in DAO governance voting</li>
+                    <li>• Support network security and decentralization</li>
+                    <li>• Unlock exclusive community features</li>
+                  </ul>
+                </div>
+
+                <Button
+                  onClick={handleStake}
+                  disabled={!stakeAmount || parseFloat(stakeAmount) <= 0 || isTransacting}
+                  loading={isTransacting}
+                  variant="gradient"
+                  className="w-full"
+                >
+                  Stake EUN
+                </Button>
+              </div>
+            </Card>
+
+            {/* Withdraw EUN */}
+            <Card className="p-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <Unlock className="w-6 h-6 mr-3 text-orange-600" />
+                Withdraw Staked EUN
+              </h3>
+              
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Amount to Withdraw
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={withdrawAmount}
+                      onChange={(e) => setWithdrawAmount(e.target.value)}
+                      placeholder="0.0"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    <div className="absolute right-3 top-3 text-sm text-gray-500">
+                      EUN
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center mt-2 text-sm">
+                    <span className="text-gray-600">
+                      Staked: {stakedBalance.toLocaleString()} EUN
+                    </span>
+                    <button
+                      onClick={() => setWithdrawAmount(stakedBalance.toString())}
+                      className="text-orange-600 hover:text-orange-700 font-medium"
+                    >
+                      Max
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-orange-50 p-4 rounded-xl">
+                  <h4 className="font-semibold text-gray-900 mb-2">⚠️ Withdrawal Notice:</h4>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    <li>• Withdrawing reduces your voting power</li>
+                    <li>• You&apos;ll stop earning rewards on withdrawn amount</li>
+                    <li>• Consider claiming rewards before withdrawing</li>
+                  </ul>
+                </div>
+
+                <Button
+                  onClick={handleWithdraw}
+                  disabled={!withdrawAmount || parseFloat(withdrawAmount) <= 0 || isTransacting}
+                  loading={isTransacting}
+                  variant="warning"
+                  className="w-full"
+                >
+                  Withdraw EUN
+                </Button>
+              </div>
+            </Card>
+          </div>
+        </>
+      )}
+
+      {activeTab === "dao" && (
+        <>
+          {/* DAO Overview */}
+          <Card className="p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900">DAO Governance</h3>
+                <p className="text-gray-600">Participate in community decision making</p>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-purple-600">
+                  {votingPower.toFixed(2)}%
+                </div>
+                <p className="text-sm text-gray-500">Your Voting Power</p>
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-lg shadow-sm border">
-              <div className="flex justify-between items-start mb-2">
-                <h5 className="font-medium text-gray-900">Fund Community Center Renovation</h5>
-                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">Active</span>
-              </div>
-              <p className="text-sm text-gray-600 mb-3">
-                Allocate 50,000 NANUM tokens for renovating the local community center in Eunpyeong-gu.
-              </p>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 text-sm">
-                  <span className="text-green-600">✓ 1,820 votes (58%)</span>
-                  <span className="text-red-600">✗ 1,320 votes (42%)</span>
+            {stakedBalance <= 0 && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="text-yellow-600">⚠️</div>
+                  <div>
+                    <h4 className="font-semibold text-yellow-800">Stake Required for Voting</h4>
+                    <p className="text-sm text-yellow-700">
+                      You need to stake EUN tokens to participate in DAO governance and voting.
+                    </p>
+                  </div>
                 </div>
-                <Button size="sm" disabled={parseFloat(stakedAmount) === 0}>
-                  {parseFloat(stakedAmount) === 0 ? "Stake to Vote" : "Vote"}
-                </Button>
               </div>
-            </div>
+            )}
+          </Card>
+
+          {/* Active Proposals */}
+          <div className="space-y-6">
+            <h3 className="text-xl font-bold text-gray-900">Active Proposals</h3>
+            
+            {proposals.map((proposal) => (
+              <Card key={proposal.id} className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-3 mb-2">
+                      <h4 className="text-lg font-semibold text-gray-900">
+                        {proposal.title}
+                      </h4>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        proposal.status === "active" 
+                          ? "bg-green-100 text-green-700"
+                          : proposal.status === "passed"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-red-100 text-red-700"
+                      }`}>
+                        {proposal.status.toUpperCase()}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 mb-4">{proposal.description}</p>
+                    
+                    <div className="flex items-center space-x-6 text-sm text-gray-500">
+                      <span>💰 {proposal.votes.toLocaleString()} votes</span>
+                      <span>📅 Deadline: {proposal.deadline}</span>
+                      {proposal.myVote && (
+                        <span className="text-green-600 font-medium">
+                          ✓ Voted {proposal.myVote}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {proposal.status === "active" && !proposal.myVote && stakedBalance > 0 && (
+                    <div className="flex space-x-2 ml-4">
+                      <Button size="sm" variant="success">
+                        Vote For
+                      </Button>
+                      <Button size="sm" variant="danger">
+                        Vote Against
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            ))}
           </div>
-        </div>
-      </Card>
+        </>
+      )}
     </div>
   );
 }
