@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useEunCoinBalance } from "../hooks/useTokenBalance";
 import { useStaking } from "../hooks/useStaking";
+import { useDAO } from "../hooks/useDAO";
 import Card from "./ui/Card";
 import Button from "./ui/Button";
 import toast from "react-hot-toast";
@@ -31,41 +32,12 @@ export default function StakingInterface() {
     claimRewards, 
     isTransacting 
   } = useStaking();
+  const { proposals, castVote, isLoading: daoLoading } = useDAO();
   
   const [stakeAmount, setStakeAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [activeTab, setActiveTab] = useState<"stake" | "dao">("stake");
-
-  // Mock DAO proposals (these would come from a real DAO contract in production)
-  const [proposals] = useState<Proposal[]>([
-    {
-      id: 1,
-      title: "Increase Community Activity Rewards",
-      description: "Proposal to increase daily activity rewards from 10 EUN to 15 EUN to encourage more community participation.",
-      votes: 1247,
-      deadline: "2024-02-15",
-      status: "active",
-      myVote: null
-    },
-    {
-      id: 2,
-      title: "Add New Donation Category: Education",
-      description: "Create a new donation category specifically for educational initiatives in Eunpyeong-gu.",
-      votes: 892,
-      deadline: "2024-02-10",
-      status: "active",
-      myVote: "for"
-    },
-    {
-      id: 3,
-      title: "Reduce Staking Lock Period",
-      description: "Reduce the minimum staking period from 30 days to 14 days to improve liquidity.",
-      votes: 2156,
-      deadline: "2024-01-28",
-      status: "passed",
-      myVote: "for"
-    }
-  ]);
+  const [myVotes, setMyVotes] = useState<Record<string, "for" | "against">>({});
 
   const handleStake = async () => {
     if (!stakeAmount || parseFloat(stakeAmount) <= 0) {
@@ -384,50 +356,56 @@ export default function StakingInterface() {
           <div className="space-y-6">
             <h3 className="text-xl font-bold text-gray-900">Active Proposals</h3>
             
-            {proposals.map((proposal) => (
-              <Card key={proposal.id} className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h4 className="text-lg font-semibold text-gray-900">
-                        {proposal.title}
-                      </h4>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        proposal.status === "active" 
-                          ? "bg-green-100 text-green-700"
-                          : proposal.status === "passed"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-red-100 text-red-700"
-                      }`}>
-                        {proposal.status.toUpperCase()}
-                      </span>
-                    </div>
-                    <p className="text-gray-600 mb-4">{proposal.description}</p>
-                    
-                    <div className="flex items-center space-x-6 text-sm text-gray-500">
-                      <span>💰 {proposal.votes.toLocaleString()} votes</span>
-                      <span>📅 Deadline: {proposal.deadline}</span>
-                      {proposal.myVote && (
-                        <span className="text-green-600 font-medium">
-                          ✓ Voted {proposal.myVote}
+            {daoLoading && <p className="text-gray-500">Loading proposals...</p>}
+            {proposals.map((proposal) => {
+              const myVote = myVotes[proposal.id.toString()];
+              return (
+                <Card key={proposal.id} className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h4 className="text-lg font-semibold text-gray-900 break-all">
+                          {proposal.description.slice(0,60)}
+                        </h4>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          proposal.status === "Active" 
+                            ? "bg-green-100 text-green-700"
+                            : proposal.status === "Succeeded"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-red-100 text-red-700"
+                        }`}>
+                          {proposal.status.toUpperCase()}
                         </span>
-                      )}
+                      </div>
+                      <p className="text-gray-600 mb-4 break-all">{proposal.description}</p>
+                      <div className="flex items-center space-x-6 text-sm text-gray-500">
+                        <span>ID: {proposal.id.toString()}</span>
+                        {myVote && (
+                          <span className="text-green-600 font-medium">✓ Voted {myVote}</span>
+                        )}
+                      </div>
                     </div>
+                    
+                    {proposal.status === "Active" && !myVote && stakedBalance > 0 && (
+                      <div className="flex space-x-2 ml-4">
+                        <Button size="sm" variant="success" onClick={async ()=>{
+                          await castVote(proposal.id,1);
+                          setMyVotes({ ...myVotes, [proposal.id.toString()]: "for" });
+                        }}>
+                          Vote For
+                        </Button>
+                        <Button size="sm" variant="danger" onClick={async ()=>{
+                          await castVote(proposal.id,0);
+                          setMyVotes({ ...myVotes, [proposal.id.toString()]: "against" });
+                        }}>
+                          Vote Against
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                  
-                  {proposal.status === "active" && !proposal.myVote && stakedBalance > 0 && (
-                    <div className="flex space-x-2 ml-4">
-                      <Button size="sm" variant="success">
-                        Vote For
-                      </Button>
-                      <Button size="sm" variant="danger">
-                        Vote Against
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </div>
         </>
       )}

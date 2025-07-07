@@ -1,14 +1,16 @@
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, usePublicClient } from "wagmi";
 import { useState, useEffect } from "react";
 import contracts from "../contracts.json";
-import DONATION_CERTIFICATE_ABI from "../abis/DonationCertificate.json";
-import { Hex } from "viem";
+import DONATION_CERTIFICATE_ABI_STR from "../abis/DonationCertificate.json";
+import { Hex, Abi } from "viem";
 import toast from "react-hot-toast";
 
 interface Certificate {
   tokenId: bigint;
   tokenURI: string;
 }
+
+const CERT_ABI: Abi = JSON.parse(DONATION_CERTIFICATE_ABI_STR as unknown as string) as Abi;
 
 export function useDonationCertificate() {
   const { address } = useAccount();
@@ -24,7 +26,7 @@ export function useDonationCertificate() {
     if (!address) return;
     const fetchCertificates = async () => {
       try {
-        const logs = await publicClient.getLogs({
+        const logs = await publicClient!.getLogs({
           address: contracts.DonationCertificate as `0x${string}`,
           event: {
             type: "event",
@@ -64,7 +66,7 @@ export function useDonationCertificate() {
 
       await writeContract({
         address: contracts.DonationCertificate as `0x${string}`,
-        abi: DONATION_CERTIFICATE_ABI,
+        abi: CERT_ABI,
         functionName: "mintCertificate",
         args: [to, uri],
       });
