@@ -41,7 +41,7 @@ const chains = [sepoliaWithRPC] as const;
 // Use a public RPC that supports CORS
 const wagmiConfig = getDefaultConfig({
   appName: "EunCoin Ecosystem",
-  projectId: "12345678901234567890123456789012", // 32 char string
+  projectId: "32c728e6ecfaf70e2c7733d6c1ecab1d", // WalletConnect project ID
   chains,
   transports: {
     [sepolia.id]: http('https://eth-sepolia.public.blastapi.io'),
