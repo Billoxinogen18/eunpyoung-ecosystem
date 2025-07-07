@@ -3,6 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --border-radius: 0.75rem;
+  --input-bg: #ffffff;
+  --input-text: #171717;
+  --input-border: #d1d5db;
+  --input-focus-border: #3b82f6;
+  --card-bg: rgba(255, 255, 255, 0.2);
+  --card-border: rgba(255, 255, 255, 0.2);
 }
 
 @theme inline {
@@ -16,6 +23,12 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --input-bg: rgba(255, 255, 255, 0.9);
+    --input-text: #171717;
+    --input-border: #374151;
+    --input-focus-border: #60a5fa;
+    --card-bg: rgba(255, 255, 255, 0.2);
+    --card-border: rgba(255, 255, 255, 0.2);
   }
 }
 
@@ -32,12 +45,52 @@ input[type="email"],
 input[type="password"],
 textarea,
 select {
-  background-color: white !important;
-  color: #171717 !important;
-  border: 1px solid #d1d5db !important;
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: var(--border-radius) !important;
+  padding: 0.75rem 1rem !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  border-color: var(--input-focus-border) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
 }
 
 input::placeholder {
   color: #6b7280 !important;
   opacity: 1 !important;
+}
+
+/* Button improvements */
+button {
+  border-radius: var(--border-radius) !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+/* Card improvements */
+.card {
+  border-radius: var(--border-radius) !important;
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+/* Improve text contrast */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+}
+
+/* Improve link contrast */
+a {
+  transition: opacity 0.2s ease-in-out !important;
+}
+
+a:hover {
+  opacity: 0.8 !important;
 }

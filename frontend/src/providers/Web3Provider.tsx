@@ -21,16 +21,16 @@ const sepoliaWithRPC = {
   rpcUrls: {
     default: {
       http: [
-        'https://rpc.sepolia.org',
-        'https://rpc2.sepolia.org',
-        'https://sepolia.gateway.tenderly.co'
+        'https://eth-sepolia.public.blastapi.io',
+        'https://ethereum-sepolia.blockpi.network/v1/rpc/public',
+        'https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
       ]
     },
     public: {
       http: [
-        'https://rpc.sepolia.org',
-        'https://rpc2.sepolia.org',
-        'https://sepolia.gateway.tenderly.co'
+        'https://eth-sepolia.public.blastapi.io',
+        'https://ethereum-sepolia.blockpi.network/v1/rpc/public',
+        'https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
       ]
     }
   }
@@ -44,12 +44,20 @@ const wagmiConfig = getDefaultConfig({
   projectId: "12345678901234567890123456789012", // 32 char string
   chains,
   transports: {
-    [sepolia.id]: http('https://rpc.sepolia.org'),
+    [sepolia.id]: http('https://eth-sepolia.public.blastapi.io'),
   },
   ssr: true,
 });
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      retryDelay: 1000,
+      staleTime: 30000,
+    },
+  },
+});
 
 export default function Web3Provider({ children }: Props) {
   return (

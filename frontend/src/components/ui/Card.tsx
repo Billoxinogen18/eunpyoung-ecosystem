@@ -12,8 +12,8 @@ interface CardProps {
 
 export default function Card({ children, className = "", hover = true, gradient = false }: CardProps) {
   const baseClasses = gradient
-    ? "backdrop-blur-xl bg-gradient-to-br from-white/20 to-white/5 border border-white/20 rounded-3xl shadow-2xl"
-    : "backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl";
+    ? "backdrop-blur-xl bg-gradient-to-br from-white/30 to-white/10 border border-white/20 rounded-xl shadow-lg"
+    : "backdrop-blur-xl bg-white/20 border border-white/20 rounded-xl shadow-lg";
 
   return (
     <motion.div
@@ -24,12 +24,12 @@ export default function Card({ children, className = "", hover = true, gradient 
       whileHover={hover ? { 
         scale: 1.02, 
         y: -5,
-        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+        boxShadow: "0 20px 30px -10px rgba(0, 0, 0, 0.2)"
       } : {}}
     >
-      <div className="relative overflow-hidden rounded-3xl">
+      <div className="relative overflow-hidden rounded-xl">
         {/* Animated gradient overlay for extra sparkle */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 via-purple-400/5 to-green-400/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-purple-400/10 to-green-400/10 opacity-0 transition-opacity duration-300 hover:opacity-100" />
         
         {/* Content with improved padding */}
         <div className="relative z-10 p-6 md:p-8">
