@@ -68,7 +68,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                 <motion.button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 group`}
+                  className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 group w-32 text-center`}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, y: 20 }}
@@ -141,7 +141,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                 <motion.button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`relative p-4 rounded-2xl font-medium transition-all duration-300 group`}
+                  className={`relative p-4 rounded-2xl font-medium transition-all duration-300 group w-full`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   initial={{ opacity: 0, y: 20 }}
