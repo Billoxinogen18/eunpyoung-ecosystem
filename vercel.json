@@ -1,0 +1,7 @@
+{
+  "env": {
+    "RPC_URL": "https://ethereum-sepolia.publicnode.com",
+    "PRIVATE_KEY": "0x2fbd4369562db81bc5e54a1de8e94814c44dc6d7f8613b05673cf5648bc3dc8d",
+    "ETHERSCAN_API_KEY": ""
+  }
+} 
