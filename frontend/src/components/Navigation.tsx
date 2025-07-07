@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { LayoutDashboard, TrendingUp, Heart, Activity, Store, Users, Sparkles } from "lucide-react";
 
 interface NavigationProps {
   activeTab: string;
@@ -10,103 +11,171 @@ interface NavigationProps {
 }
 
 const navigationItems = [
-  { id: "dashboard", label: "Dashboard", icon: "🏠" },
-  { id: "staking", label: "Staking & DAO", icon: "🗳️" },
-  { id: "donations", label: "Donations", icon: "💚" },
-  { id: "activities", label: "Activities", icon: "🚶" },
-  { id: "store", label: "Store Pay", icon: "🏪" },
-  { id: "campaigns", label: "Campaigns", icon: "🎉" },
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, gradient: "from-blue-500 to-cyan-500" },
+  { id: "staking", label: "Staking & DAO", icon: TrendingUp, gradient: "from-purple-500 to-pink-500" },
+  { id: "donations", label: "Donations", icon: Heart, gradient: "from-green-500 to-emerald-500" },
+  { id: "activities", label: "Activities", icon: Activity, gradient: "from-orange-500 to-yellow-500" },
+  { id: "store", label: "Store Pay", icon: Store, gradient: "from-indigo-500 to-blue-500" },
+  { id: "campaigns", label: "Campaigns", icon: Users, gradient: "from-pink-500 to-rose-500" },
 ];
 
 export default function Navigation({ activeTab, setActiveTab }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-white shadow-lg border-b border-gray-200">
+    <motion.nav
+      className="sticky top-0 z-50 backdrop-blur-xl bg-white/10 border-b border-white/20 shadow-2xl"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <motion.div 
+        <div className="flex justify-between items-center h-20">
+          {/* Logo Section */}
+          <motion.div
             className="flex items-center space-x-3"
             whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
           >
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-green-600 rounded-lg flex items-center justify-center text-white font-bold">
-              E
+            <div className="relative">
+              <motion.div
+                className="w-12 h-12 bg-gradient-to-r from-blue-400 via-purple-500 to-green-400 rounded-2xl flex items-center justify-center text-white text-xl font-black shadow-lg"
+                whileHover={{ rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                E
+              </motion.div>
+              <motion.div
+                className="absolute -top-1 -right-1 text-yellow-400"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              >
+                <Sparkles size={12} />
+              </motion.div>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">EunCoin Ecosystem</h1>
-              <p className="text-xs text-gray-500">PureChain Powered</p>
+              <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                EunCoin
+              </h1>
+              <p className="text-xs text-gray-400 font-medium">Ecosystem</p>
             </div>
           </motion.div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            {navigationItems.map((item) => (
-              <motion.button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeTab === item.id
-                    ? "bg-blue-100 text-blue-700"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="mr-1">{item.icon}</span>
-                {item.label}
-              </motion.button>
-            ))}
+          {/* Navigation Tabs */}
+          <div className="hidden md:flex items-center space-x-2">
+            {navigationItems.map((item, index) => {
+              const IconComponent = item.icon;
+              const isActive = activeTab === item.id;
+              
+              return (
+                <motion.button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ${
+                    isActive
+                      ? "text-white shadow-2xl"
+                      : "text-gray-300 hover:text-white hover:bg-white/10"
+                  }`}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  {/* Active Background */}
+                  {isActive && (
+                    <>
+                      <motion.div
+                        className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl blur-sm opacity-75`}
+                        layoutId="activeBackground"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                      <motion.div
+                        className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl`}
+                        layoutId="activeBackgroundSolid"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    </>
+                  )}
+                  
+                  {/* Content */}
+                  <div className="relative flex items-center space-x-2">
+                    <IconComponent size={18} />
+                    <span className="text-sm">{item.label}</span>
+                  </div>
+                  
+                  {/* Hover Effect */}
+                  {!isActive && (
+                    <motion.div
+                      className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl opacity-0`}
+                      whileHover={{ opacity: 0.1 }}
+                      transition={{ duration: 0.2 }}
+                    />
+                  )}
+                </motion.button>
+              );
+            })}
           </div>
 
-          {/* Connect Wallet */}
-          <div className="flex items-center space-x-4">
-            <ConnectButton />
-            
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
+          {/* Mobile Menu Button */}
+          <motion.button
+            className="md:hidden p-3 rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Users size={20} />
+          </motion.button>
+        </div>
+      </div>
+
+      {/* Mobile Navigation */}
+      <motion.div
+        className="md:hidden bg-black/20 backdrop-blur-xl border-t border-white/10"
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: "auto" }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="px-4 py-4">
+          <div className="grid grid-cols-3 gap-3">
+            {navigationItems.map((item, index) => {
+              const IconComponent = item.icon;
+              const isActive = activeTab === item.id;
+              
+              return (
+                <motion.button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`relative p-4 rounded-2xl font-medium transition-all duration-300 ${
+                    isActive
+                      ? "text-white shadow-xl"
+                      : "text-gray-300 hover:text-white hover:bg-white/10"
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  {/* Active Background */}
+                  {isActive && (
+                    <motion.div
+                      className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl`}
+                      layoutId="mobileActiveBackground"
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                  
+                  {/* Content */}
+                  <div className="relative flex flex-col items-center space-y-1">
+                    <IconComponent size={20} />
+                    <span className="text-xs">{item.label}</span>
+                  </div>
+                </motion.button>
+              );
+            })}
           </div>
         </div>
-
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-gray-200 py-2"
-            >
-              <div className="space-y-1">
-                {navigationItems.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      setActiveTab(item.id);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium ${
-                      activeTab === item.id
-                        ? "bg-blue-100 text-blue-700"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                    }`}
-                  >
-                    <span className="mr-2">{item.icon}</span>
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </nav>
+      </motion.div>
+    </motion.nav>
   );
 }
