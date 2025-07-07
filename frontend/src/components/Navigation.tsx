@@ -9,19 +9,18 @@ interface NavigationProps {
 }
 
 const navigationItems = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, gradient: "from-blue-500 to-cyan-500" },
-  { id: "staking", label: "Staking & DAO", icon: TrendingUp, gradient: "from-purple-500 to-pink-500" },
-  { id: "donations", label: "Donations", icon: Heart, gradient: "from-green-500 to-emerald-500" },
-  { id: "activities", label: "Activities", icon: Activity, gradient: "from-orange-500 to-yellow-500" },
-  { id: "store", label: "Store Pay", icon: Store, gradient: "from-indigo-500 to-blue-500" },
-  { id: "campaigns", label: "Campaigns", icon: Users, gradient: "from-pink-500 to-rose-500" },
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, gradient: "from-blue-500 to-cyan-500", lightColor: "text-blue-50" },
+  { id: "staking", label: "Staking & DAO", icon: TrendingUp, gradient: "from-purple-500 to-pink-500", lightColor: "text-purple-50" },
+  { id: "donations", label: "Donations", icon: Heart, gradient: "from-green-500 to-emerald-500", lightColor: "text-green-50" },
+  { id: "activities", label: "Activities", icon: Activity, gradient: "from-orange-500 to-yellow-500", lightColor: "text-orange-50" },
+  { id: "store", label: "Store Pay", icon: Store, gradient: "from-indigo-500 to-blue-500", lightColor: "text-indigo-50" },
+  { id: "campaigns", label: "Campaigns", icon: Users, gradient: "from-pink-500 to-rose-500", lightColor: "text-pink-50" },
 ];
 
 export default function Navigation({ activeTab, setActiveTab }: NavigationProps) {
-
   return (
     <motion.nav
-      className="sticky top-0 z-50 backdrop-blur-xl bg-white/10 border-b border-white/20 shadow-2xl"
+      className="sticky top-0 z-50 backdrop-blur-xl bg-white/90 border-b border-gray-200 shadow-lg"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -58,7 +57,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
             </div>
           </motion.div>
 
-          {/* Navigation Tabs - Improved contrast */}
+          {/* Navigation Tabs - Updated color scheme */}
           <div className="hidden md:flex items-center space-x-2">
             {navigationItems.map((item, index) => {
               const IconComponent = item.icon;
@@ -68,11 +67,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                 <motion.button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ${
-                    isActive
-                      ? "text-white shadow-2xl"
-                      : "text-white hover:text-white"
-                  }`}
+                  className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 group`}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, y: 20 }}
@@ -96,16 +91,17 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                   )}
                   
                   {/* Content */}
-                  <div className="relative flex items-center space-x-2">
+                  <div className={`relative flex items-center space-x-2 ${
+                    isActive ? item.lightColor : 'text-black group-hover:text-white'
+                  } transition-colors duration-200`}>
                     <IconComponent size={18} />
                     <span className="text-sm font-bold">{item.label}</span>
                   </div>
                   
-                  {/* Hover Effect - Improved visibility */}
+                  {/* Hover Effect - Updated for white text on hover */}
                   {!isActive && (
                     <motion.div
-                      className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl opacity-0`}
-                      whileHover={{ opacity: 0.4 }}
+                      className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl opacity-0 group-hover:opacity-90`}
                       transition={{ duration: 0.2 }}
                     />
                   )}
@@ -125,9 +121,9 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
         </div>
       </div>
 
-      {/* Mobile Navigation - Improved contrast */}
+      {/* Mobile Navigation - Updated color scheme */}
       <motion.div
-        className="md:hidden bg-black/30 backdrop-blur-xl border-t border-white/10"
+        className="md:hidden bg-white/90 backdrop-blur-xl border-t border-gray-200"
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: "auto" }}
         transition={{ duration: 0.3 }}
@@ -142,11 +138,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                 <motion.button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`relative p-4 rounded-2xl font-medium transition-all duration-300 ${
-                    isActive
-                      ? "text-white shadow-xl"
-                      : "text-white hover:text-white hover:bg-white/15"
-                  }`}
+                  className={`relative p-4 rounded-2xl font-medium transition-all duration-300 group`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   initial={{ opacity: 0, y: 20 }}
@@ -163,10 +155,20 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                   )}
                   
                   {/* Content */}
-                  <div className="relative flex flex-col items-center space-y-1">
+                  <div className={`relative flex flex-col items-center space-y-1 ${
+                    isActive ? item.lightColor : 'text-black group-hover:text-white'
+                  } transition-colors duration-200`}>
                     <IconComponent size={20} />
                     <span className="text-xs font-bold">{item.label}</span>
                   </div>
+                  
+                  {/* Hover Effect for mobile */}
+                  {!isActive && (
+                    <motion.div
+                      className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl opacity-0 group-hover:opacity-90`}
+                      transition={{ duration: 0.2 }}
+                    />
+                  )}
                 </motion.button>
               );
             })}
