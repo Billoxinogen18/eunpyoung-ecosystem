@@ -2,7 +2,7 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt, usePublicCl
 import { Abi } from "viem";
 import contracts from "../contracts.json";
 import EUN_DAO_ABI_STR from "../abis/EunDAO.json";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 
 const DAO_ABI: Abi = JSON.parse(EUN_DAO_ABI_STR as unknown as string) as Abi;
@@ -26,7 +26,7 @@ export function useDAO() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Fetch proposals via ProposalCreated events
-  const fetchProposals = async () => {
+  const fetchProposals = useCallback(async () => {
     setIsLoading(true);
     try {
       const logs = await publicClient!.getLogs({
@@ -89,11 +89,11 @@ export function useDAO() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [publicClient]);
 
   useEffect(() => {
     fetchProposals();
-  }, [publicClient]);
+  }, [fetchProposals]);
 
   const createProposal = async (
     targets: `0x${string}`[],

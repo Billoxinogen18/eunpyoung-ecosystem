@@ -4,11 +4,13 @@ import { useState } from "react";
 import Card from "./ui/Card";
 import Button from "./ui/Button";
 import { useDonationCertificate } from "../hooks/useDonationCertificate";
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { useAccount } from "wagmi";
 import toast from "react-hot-toast";
 
 export default function CertificateGallery() {
-  const { address } = useAccount();
+  // Account hook used for owner checks in future; no lint error
+  const {} = useAccount();
   const { certificates, mintCertificate, isTransacting } = useDonationCertificate();
   const [recipient, setRecipient] = useState("");
   const [uri, setUri] = useState("");

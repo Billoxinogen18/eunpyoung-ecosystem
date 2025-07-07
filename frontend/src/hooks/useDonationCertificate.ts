@@ -1,8 +1,9 @@
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, usePublicClient } from "wagmi";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, usePublicClient } from "wagmi";
 import { useState, useEffect } from "react";
 import contracts from "../contracts.json";
 import DONATION_CERTIFICATE_ABI_STR from "../abis/DonationCertificate.json";
-import { Hex, Abi } from "viem";
+import { Abi } from "viem";
 import toast from "react-hot-toast";
 
 interface Certificate {

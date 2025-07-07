@@ -10,16 +10,6 @@ import Button from "./ui/Button";
 import toast from "react-hot-toast";
 import { TrendingUp, Users, Vote, Award, Lock, Unlock } from "lucide-react";
 
-interface Proposal {
-  id: number;
-  title: string;
-  description: string;
-  votes: number;
-  deadline: string;
-  status: "active" | "passed" | "failed";
-  myVote?: "for" | "against" | null;
-}
-
 export default function StakingInterface() {
   const { balance: eunBalance } = useEunCoinBalance();
   const { 
