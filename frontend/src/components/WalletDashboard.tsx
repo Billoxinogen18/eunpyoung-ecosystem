@@ -100,20 +100,8 @@ export default function WalletDashboard() {
                   <div className="flex items-center justify-between mb-4">
                     <div className={`p-3 rounded-2xl bg-gradient-to-r ${card.gradient} bg-opacity-10`}>
                       <IconComponent 
-                        className={`w-6 h-6 text-transparent bg-clip-text bg-gradient-to-r ${card.gradient}`}
-                        style={{ 
-                          filter: 'url(#gradient)',
-                          fill: `url(#gradient-${index})`
-                        }}
+                        className="w-6 h-6 text-gray-800"
                       />
-                      <svg width="0" height="0">
-                        <defs>
-                          <linearGradient id={`gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor={card.gradient.includes('blue') ? '#3B82F6' : card.gradient.includes('green') ? '#10B981' : card.gradient.includes('purple') ? '#8B5CF6' : '#F59E0B'} />
-                            <stop offset="100%" stopColor={card.gradient.includes('cyan') ? '#06B6D4' : card.gradient.includes('emerald') ? '#059669' : card.gradient.includes('pink') ? '#EC4899' : '#F97316'} />
-                          </linearGradient>
-                        </defs>
-                      </svg>
                     </div>
                     
                     {card.isLoading && (

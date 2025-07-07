@@ -89,22 +89,24 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                       />
                     </>
                   )}
-                  
+                  {/* Hover Effect - fade in/out */}
+                  {!isActive && (
+                    <motion.div
+                      className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl opacity-0`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 0.9 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      style={{ pointerEvents: 'none' }}
+                    />
+                  )}
                   {/* Content */}
                   <div className={`relative flex items-center space-x-2 ${
                     isActive ? item.lightColor : 'text-black group-hover:text-white'
                   } transition-colors duration-200`}>
-                    <IconComponent size={18} />
+                    <IconComponent size={18} className={isActive ? item.lightColor : 'text-black group-hover:text-white'} />
                     <span className="text-sm font-bold">{item.label}</span>
                   </div>
-                  
-                  {/* Hover Effect - Updated for white text on hover */}
-                  {!isActive && (
-                    <motion.div
-                      className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl opacity-0 group-hover:opacity-90`}
-                      transition={{ duration: 0.2 }}
-                    />
-                  )}
                 </motion.button>
               );
             })}
@@ -153,22 +155,24 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />
                   )}
-                  
+                  {/* Hover Effect for mobile - fade in/out */}
+                  {!isActive && (
+                    <motion.div
+                      className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl opacity-0`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 0.9 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      style={{ pointerEvents: 'none' }}
+                    />
+                  )}
                   {/* Content */}
                   <div className={`relative flex flex-col items-center space-y-1 ${
                     isActive ? item.lightColor : 'text-black group-hover:text-white'
                   } transition-colors duration-200`}>
-                    <IconComponent size={20} />
+                    <IconComponent size={20} className={isActive ? item.lightColor : 'text-black group-hover:text-white'} />
                     <span className="text-xs font-bold">{item.label}</span>
                   </div>
-                  
-                  {/* Hover Effect for mobile */}
-                  {!isActive && (
-                    <motion.div
-                      className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl opacity-0 group-hover:opacity-90`}
-                      transition={{ duration: 0.2 }}
-                    />
-                  )}
                 </motion.button>
               );
             })}
