@@ -78,7 +78,10 @@ export default function StorePayment() {
       return;
     }
 
-    if (parseFloat(paymentAmount) > parseFloat(eunBalance)) {
+    const eunBalanceNum = Number(eunBalance);
+    const paymentAmountNum = parseFloat(paymentAmount);
+    
+    if (paymentAmountNum > eunBalanceNum) {
       toast.error("Insufficient EunCoin balance");
       return;
     }
@@ -86,8 +89,8 @@ export default function StorePayment() {
     // Simulate payment processing
     setShowQR(true);
     setTimeout(() => {
-      const discountAmount = (parseFloat(paymentAmount) * selectedStore.discount) / 100;
-      const rewardAmount = (parseFloat(paymentAmount) * selectedStore.rewardRate) / 100;
+      const discountAmount = (paymentAmountNum * selectedStore.discount) / 100;
+      const rewardAmount = (paymentAmountNum * selectedStore.rewardRate) / 100;
       
       toast.success(`Payment successful! Saved ${discountAmount.toFixed(2)} EUN, earned ${rewardAmount.toFixed(2)} EUN rewards!`);
       setShowQR(false);
@@ -111,7 +114,7 @@ export default function StorePayment() {
       <Card>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center p-3 bg-green-50 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">{parseFloat(eunBalance).toFixed(2)}</div>
+            <div className="text-2xl font-bold text-green-600">{Number(eunBalance).toFixed(2)}</div>
             <p className="text-sm text-gray-600">Available Balance</p>
           </div>
           <div className="text-center p-3 bg-blue-50 rounded-lg">

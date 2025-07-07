@@ -73,7 +73,6 @@ export function useStaking() {
   const stakedBalance = stakedBalanceData ? formatUnits(stakedBalanceData as bigint, 18) : "0";
   const earnedRewards = earnedRewardsData ? formatUnits(earnedRewardsData as bigint, 18) : "0";
   const totalStaked = totalSupplyData ? formatUnits(totalSupplyData as bigint, 18) : "0";
-  const rewardRate = rewardRateData ? formatUnits(rewardRateData as bigint, 18) : "0";
   const allowance = allowanceData ? formatUnits(allowanceData as bigint, 18) : "0";
 
   // Calculate APR (approximate, assuming 1 EUN = 1 reward token)

@@ -194,7 +194,7 @@ export default function Campaigns() {
         ].map((tab) => (
           <Button
             key={tab.id}
-            variant={selectedTab === tab.id ? "primary" : "ghost"}
+            variant={selectedTab === tab.id ? "primary" : "secondary"}
             size="sm"
             onClick={() => setSelectedTab(tab.id)}
             className="flex-1"

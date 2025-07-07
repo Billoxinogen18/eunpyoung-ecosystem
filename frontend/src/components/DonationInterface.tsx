@@ -43,7 +43,10 @@ export default function DonationInterface() {
       return;
     }
 
-    if (parseFloat(convertAmount) > parseFloat(eunBalance)) {
+    const eunBalanceNum = Number(eunBalance);
+    const convertAmountNum = parseFloat(convertAmount);
+    
+    if (convertAmountNum > eunBalanceNum) {
       toast.error("Insufficient EunCoin balance");
       return;
     }
@@ -122,11 +125,11 @@ export default function DonationInterface() {
             <div className="bg-gradient-to-r from-blue-50 to-green-50 p-4 rounded-lg">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-gray-600">Your EunCoin Balance</span>
-                <span className="font-semibold text-blue-600">{parseFloat(eunBalance).toFixed(2)} EUN</span>
+                <span className="font-semibold text-blue-600">{Number(eunBalance).toFixed(2)} EUN</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Your NanumCoin Balance</span>
-                <span className="font-semibold text-green-600">{parseFloat(nanumBalance).toFixed(2)} NANUM</span>
+                <span className="font-semibold text-green-600">{Number(nanumBalance).toFixed(2)} NANUM</span>
               </div>
             </div>
 
@@ -238,8 +241,8 @@ export default function DonationInterface() {
 
               <div className="flex justify-between items-center">
                 <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{project.category}</span>
-                <Button size="sm" disabled={parseFloat(nanumBalance) === 0}>
-                  {parseFloat(nanumBalance) === 0 ? "Get NANUM" : "Donate"}
+                <Button size="sm" disabled={Number(nanumBalance) === 0}>
+                  {Number(nanumBalance) === 0 ? "Get NANUM" : "Donate"}
                 </Button>
               </div>
             </div>

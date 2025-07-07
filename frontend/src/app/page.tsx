@@ -366,7 +366,7 @@ export default function Home() {
       
       <main className={`${(isConnected || address) ? 'pt-4' : ''}`}>
         <div className={`${(isConnected || address) ? 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8' : ''}`}>
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             <motion.div
               key={activeTab}
               initial={{ opacity: 0, x: 20 }}
