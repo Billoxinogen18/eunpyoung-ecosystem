@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { motion } from "framer-motion";
@@ -16,8 +16,13 @@ import Campaigns from "../components/Campaigns";
 import Card from "../components/ui/Card";
 
 export default function Home() {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const [activeTab, setActiveTab] = useState("dashboard");
+
+  // Debug logging
+  useEffect(() => {
+    console.log("Wallet connection status:", { isConnected, address });
+  }, [isConnected, address]);
 
   const renderContent = () => {
     if (!isConnected) {
@@ -147,8 +152,15 @@ export default function Home() {
         }}
       />
       
+      {/* Always show navigation when connected */}
       {isConnected && (
-        <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+        <>
+          <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+          {/* Debug info */}
+          <div className="bg-green-100 p-2 text-xs text-center">
+            🟢 Wallet Connected: {address?.slice(0, 6)}...{address?.slice(-4)} | Active Tab: {activeTab}
+          </div>
+        </>
       )}
       
       <main className={`${isConnected ? 'pt-4' : ''}`}>
