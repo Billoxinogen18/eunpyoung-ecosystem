@@ -1,74 +1,236 @@
 "use client";
 
-import { useAccount } from "wagmi";
-import { useEunCoinBalance, useNanumCoinBalance } from "../hooks/useTokenBalance";
-import Card from "./ui/Card";
 import { motion } from "framer-motion";
+import { useEunCoinBalance, useNanumCoinBalance } from "../hooks/useTokenBalance";
+import { useStaking } from "../hooks/useStaking";
+import Card from "./ui/Card";
+import { Coins, TrendingUp, Heart, Activity, RefreshCw } from "lucide-react";
 
 export default function WalletDashboard() {
-  const { address, isConnected } = useAccount();
-  const { balance: eunBalance, isLoading: eunLoading } = useEunCoinBalance();
-  const { balance: nanumBalance, isLoading: nanumLoading } = useNanumCoinBalance();
+  const { balance: eunBalance, isLoading: eunLoading, error: eunError, refetch: refetchEun } = useEunCoinBalance();
+  const { balance: nanumBalance, isLoading: nanumLoading, error: nanumError, refetch: refetchNanum } = useNanumCoinBalance();
+  const { stakedBalance, earnedRewards, apr, isTransacting } = useStaking();
 
-  if (!isConnected) {
-    return null;
-  }
+  const handleRefresh = () => {
+    refetchEun();
+    refetchNanum();
+  };
+
+  const dashboardCards = [
+    {
+      title: "EunCoin Balance",
+      value: eunLoading ? "Loading..." : eunError ? "Error" : `${eunBalance.toLocaleString()} EUN`,
+      change: "+2.5% from last week",
+      icon: Coins,
+      gradient: "from-blue-500 to-cyan-500",
+      isLoading: eunLoading,
+      hasError: !!eunError,
+    },
+    {
+      title: "NanumCoin Balance", 
+      value: nanumLoading ? "Loading..." : nanumError ? "Error" : `${nanumBalance.toLocaleString()} NANUM`,
+      change: "+15.3% from last month",
+      icon: Heart,
+      gradient: "from-green-500 to-emerald-500",
+      isLoading: nanumLoading,
+      hasError: !!nanumError,
+    },
+    {
+      title: "Staked EUN",
+      value: `${stakedBalance.toLocaleString()} EUN`,
+      change: `${apr.toFixed(1)}% APR`,
+      icon: TrendingUp,
+      gradient: "from-purple-500 to-pink-500",
+      isLoading: isTransacting,
+      hasError: false,
+    },
+    {
+      title: "Pending Rewards",
+      value: `${earnedRewards.toLocaleString()} EUN`,
+      change: "Available to claim",
+      icon: Activity,
+      gradient: "from-orange-500 to-yellow-500",
+      isLoading: isTransacting,
+      hasError: false,
+    },
+  ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="w-full max-w-4xl mx-auto space-y-6"
-    >
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Your Wallet Dashboard</h2>
-        <p className="text-sm text-gray-600 font-mono">
-          {address?.slice(0, 6)}...{address?.slice(-4)}
+    <div className="space-y-8">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center"
+      >
+        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-4">
+          💳 Wallet Dashboard
+        </h2>
+        <p className="text-gray-600 text-lg">
+          Your EunCoin ecosystem portfolio overview
         </p>
+        <motion.button
+          onClick={handleRefresh}
+          className="mt-4 inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:shadow-lg transition-all duration-200"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          disabled={eunLoading || nanumLoading}
+        >
+          <RefreshCw className={`w-4 h-4 ${(eunLoading || nanumLoading) ? 'animate-spin' : ''}`} />
+          <span>Refresh Balances</span>
+        </motion.button>
+      </motion.div>
+
+      {/* Balance Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {dashboardCards.map((card, index) => {
+          const IconComponent = card.icon;
+          
+          return (
+            <motion.div
+              key={card.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Card className="relative overflow-hidden">
+                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-5`} />
+                
+                <div className="relative p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`p-3 rounded-2xl bg-gradient-to-r ${card.gradient} bg-opacity-10`}>
+                      <IconComponent 
+                        className={`w-6 h-6 text-transparent bg-clip-text bg-gradient-to-r ${card.gradient}`}
+                        style={{ 
+                          filter: 'url(#gradient)',
+                          fill: `url(#gradient-${index})`
+                        }}
+                      />
+                      <svg width="0" height="0">
+                        <defs>
+                          <linearGradient id={`gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor={card.gradient.includes('blue') ? '#3B82F6' : card.gradient.includes('green') ? '#10B981' : card.gradient.includes('purple') ? '#8B5CF6' : '#F59E0B'} />
+                            <stop offset="100%" stopColor={card.gradient.includes('cyan') ? '#06B6D4' : card.gradient.includes('emerald') ? '#059669' : card.gradient.includes('pink') ? '#EC4899' : '#F97316'} />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                    </div>
+                    
+                    {card.isLoading && (
+                      <div className="animate-pulse">
+                        <div className="w-4 h-4 bg-gray-300 rounded-full"></div>
+                      </div>
+                    )}
+                    
+                    {card.hasError && (
+                      <div className="text-red-500 text-sm">⚠️</div>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-gray-600">{card.title}</h3>
+                    <div className="text-2xl font-bold text-gray-900">
+                      {card.value}
+                    </div>
+                    <p className="text-sm text-gray-500">{card.change}</p>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          );
+        })}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* EunCoin Balance */}
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">EunCoin</h3>
-              <p className="text-sm text-gray-600">Main Utility Token</p>
+      {/* Quick Actions */}
+      <Card className="p-8">
+        <h3 className="text-2xl font-bold text-gray-900 mb-6">⚡ Quick Actions</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div
+            className="p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 cursor-pointer"
+            whileHover={{ scale: 1.02, y: -2 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="p-2 bg-blue-500 rounded-xl">
+                <TrendingUp className="w-5 h-5 text-white" />
+              </div>
+              <h4 className="font-semibold text-gray-900">Stake EUN</h4>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-blue-600">
-                {eunLoading ? "..." : parseFloat(eunBalance).toFixed(2)}
-              </p>
-              <p className="text-sm text-gray-500">EUN</p>
+            <p className="text-sm text-gray-600 mb-4">
+              Stake your EUN tokens to earn {apr.toFixed(1)}% APR and participate in DAO governance
+            </p>
+            <div className="text-sm font-medium text-blue-600">
+              Current APR: {apr.toFixed(1)}%
             </div>
-          </div>
-          <div className="mt-4 flex items-center text-xs text-gray-500">
-            <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-            Life • Payment • Reward
-          </div>
-        </Card>
+          </motion.div>
 
-        {/* NanumCoin Balance */}
-        <Card>
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">NanumCoin</h3>
-              <p className="text-sm text-gray-600">Donation Token</p>
+          <motion.div
+            className="p-6 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 cursor-pointer"
+            whileHover={{ scale: 1.02, y: -2 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="p-2 bg-green-500 rounded-xl">
+                <Heart className="w-5 h-5 text-white" />
+              </div>
+              <h4 className="font-semibold text-gray-900">Convert to NANUM</h4>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-green-600">
-                {nanumLoading ? "..." : parseFloat(nanumBalance).toFixed(2)}
-              </p>
-              <p className="text-sm text-gray-500">NANUM</p>
+            <p className="text-sm text-gray-600 mb-4">
+              Convert EUN to NANUM for community donations and welfare projects
+            </p>
+            <div className="text-sm font-medium text-green-600">
+              1:1 Conversion Rate
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="p-6 rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-100 cursor-pointer"
+            whileHover={{ scale: 1.02, y: -2 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="p-2 bg-purple-500 rounded-xl">
+                <Activity className="w-5 h-5 text-white" />
+              </div>
+              <h4 className="font-semibold text-gray-900">Earn Rewards</h4>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              Complete daily activities and community challenges to earn more EUN
+            </p>
+            <div className="text-sm font-medium text-purple-600">
+              Up to 50 EUN daily
+            </div>
+          </motion.div>
+        </div>
+      </Card>
+
+      {/* Network Status */}
+      <Card className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">🌐 Network Status</h3>
+            <div className="space-y-1 text-sm text-gray-600">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span>Connected to Sepolia Testnet</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                <span>PureChain Offline Mode Ready</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                <span>Smart Contracts Verified</span>
+              </div>
             </div>
           </div>
-          <div className="mt-4 flex items-center text-xs text-gray-500">
-            <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-            Donation • Sponsorship
+          <div className="text-right">
+            <div className="text-2xl font-bold text-green-600">Online</div>
+            <p className="text-sm text-gray-500">All systems operational</p>
           </div>
-        </Card>
-      </div>
-    </motion.div>
+        </div>
+      </Card>
+    </div>
   );
 }

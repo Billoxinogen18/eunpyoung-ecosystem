@@ -1,0 +1,135 @@
+[
+  {
+    "inputs": [
+      {"name": "_eunCoin", "type": "address"},
+      {"name": "_nanumCoin", "type": "address"}
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {"indexed": true, "name": "user", "type": "address"},
+      {"indexed": false, "name": "eunAmount", "type": "uint256"},
+      {"indexed": false, "name": "nanumAmount", "type": "uint256"}
+    ],
+    "name": "Converted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {"indexed": true, "name": "projectId", "type": "uint256"},
+      {"indexed": false, "name": "amount", "type": "uint256"},
+      {"indexed": true, "name": "donor", "type": "address"}
+    ],
+    "name": "DonationMade",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {"indexed": true, "name": "projectId", "type": "uint256"},
+      {"indexed": false, "name": "name", "type": "string"},
+      {"indexed": false, "name": "goal", "type": "uint256"}
+    ],
+    "name": "ProjectCreated",
+    "type": "event"
+  },
+  {
+    "inputs": [{"name": "_amount", "type": "uint256"}],
+    "name": "convertToNanum",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {"name": "_projectId", "type": "uint256"},
+      {"name": "_amount", "type": "uint256"}
+    ],
+    "name": "donateToProject",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {"name": "_name", "type": "string"},
+      {"name": "_description", "type": "string"},
+      {"name": "_goal", "type": "uint256"},
+      {"name": "_category", "type": "string"}
+    ],
+    "name": "createProject",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{"name": "_projectId", "type": "uint256"}],
+    "name": "getProject",
+    "outputs": [
+      {"name": "name", "type": "string"},
+      {"name": "description", "type": "string"},
+      {"name": "goal", "type": "uint256"},
+      {"name": "raised", "type": "uint256"},
+      {"name": "category", "type": "string"},
+      {"name": "active", "type": "bool"}
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "projectCount",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{"name": "", "type": "uint256"}],
+    "name": "projects",
+    "outputs": [
+      {"name": "name", "type": "string"},
+      {"name": "description", "type": "string"},
+      {"name": "goal", "type": "uint256"},
+      {"name": "raised", "type": "uint256"},
+      {"name": "category", "type": "string"},
+      {"name": "active", "type": "bool"}
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "eunCoin",
+    "outputs": [{"name": "", "type": "address"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nanumCoin",
+    "outputs": [{"name": "", "type": "address"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "conversionRate",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {"name": "", "type": "address"},
+      {"name": "", "type": "uint256"}
+    ],
+    "name": "userDonations",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

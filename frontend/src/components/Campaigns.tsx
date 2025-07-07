@@ -320,7 +320,7 @@ export default function Campaigns() {
               </div>
             </div>
             <div className="text-center md:text-right">
-              <Button variant="outline" className="text-white border-white hover:bg-white hover:text-blue-600">
+                              <Button variant="secondary" className="text-white border-white hover:bg-white hover:text-blue-600">
                 Learn More
               </Button>
             </div>

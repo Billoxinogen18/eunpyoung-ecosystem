@@ -1,52 +1,75 @@
 "use client";
 
 import { useAccount, useReadContract } from "wagmi";
-import { formatEther } from "viem";
+import { formatUnits } from "viem";
 import contracts from "../contracts.json";
+import ERC20_ABI from "../abis/ERC20.json";
 
-const ERC20_ABI = [
-  {
-    constant: true,
-    inputs: [{ name: "_owner", type: "address" }],
-    name: "balanceOf",
-    outputs: [{ name: "balance", type: "uint256" }],
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "decimals",
-    outputs: [{ name: "", type: "uint8" }],
-    type: "function",
-  },
-] as const;
-
-export function useTokenBalance(tokenAddress: string) {
+export function useTokenBalance(tokenSymbol: "EUN" | "NANUM") {
   const { address } = useAccount();
-
-  const { data: balance, isLoading, error } = useReadContract({
-    address: tokenAddress as `0x${string}`,
+  
+  const contractAddress = tokenSymbol === "EUN" ? contracts.EunCoin : contracts.NanumCoin;
+  
+  const { data: balanceData, isLoading, error, refetch } = useReadContract({
+    address: contractAddress as `0x${string}`,
     abi: ERC20_ABI,
     functionName: "balanceOf",
     args: address ? [address] : undefined,
     query: {
       enabled: !!address,
+      refetchInterval: 5000, // Refetch every 5 seconds
     },
   });
 
-  const formattedBalance = balance ? formatEther(balance as bigint) : "0";
+  const { data: decimalsData } = useReadContract({
+    address: contractAddress as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: "decimals",
+    query: {
+      enabled: true,
+    },
+  });
+
+  const { data: nameData } = useReadContract({
+    address: contractAddress as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: "name",
+    query: {
+      enabled: true,
+    },
+  });
+
+  const { data: symbolData } = useReadContract({
+    address: contractAddress as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: "symbol",
+    query: {
+      enabled: true,
+    },
+  });
+
+  // Format balance with proper decimals
+  const balance = balanceData && decimalsData 
+    ? formatUnits(balanceData as bigint, decimalsData as number)
+    : "0";
 
   return {
-    balance: formattedBalance,
+    balance: parseFloat(balance),
+    formattedBalance: balance,
     isLoading,
     error,
+    refetch,
+    contractAddress,
+    decimals: decimalsData as number,
+    name: nameData as string,
+    symbol: symbolData as string,
   };
 }
 
 export function useEunCoinBalance() {
-  return useTokenBalance(contracts.EunCoin);
+  return useTokenBalance("EUN");
 }
 
 export function useNanumCoinBalance() {
-  return useTokenBalance(contracts.NanumCoin);
+  return useTokenBalance("NANUM");
 }
