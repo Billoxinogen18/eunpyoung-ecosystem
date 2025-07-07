@@ -31,8 +31,8 @@ export default function Card({ children, className = "", hover = true, gradient 
         {/* Animated gradient overlay for extra sparkle */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 via-purple-400/5 to-green-400/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
         
-        {/* Content */}
-        <div className="relative z-10">
+        {/* Content with improved padding */}
+        <div className="relative z-10 p-6 md:p-8">
           {children}
         </div>
       </div>

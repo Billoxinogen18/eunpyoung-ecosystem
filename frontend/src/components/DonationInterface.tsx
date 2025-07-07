@@ -120,42 +120,42 @@ export default function DonationInterface() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Conversion Interface */}
         <Card>
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">EunCoin → NanumCoin Conversion</h3>
-          <div className="space-y-4">
-            <div className="bg-gradient-to-r from-blue-50 to-green-50 p-4 rounded-lg">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-600">Your EunCoin Balance</span>
+          <h3 className="text-xl font-semibold text-gray-900 mb-6">EunCoin → NanumCoin Conversion</h3>
+          <div className="space-y-6">
+            <div className="bg-gradient-to-r from-blue-50 to-green-50 p-5 rounded-xl shadow-sm">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-sm font-medium text-gray-600">Your EunCoin Balance</span>
                 <span className="font-semibold text-blue-600">{Number(eunBalance).toFixed(2)} EUN</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Your NanumCoin Balance</span>
+                <span className="text-sm font-medium text-gray-600">Your NanumCoin Balance</span>
                 <span className="font-semibold text-green-600">{Number(nanumBalance).toFixed(2)} NANUM</span>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
                 Amount to Convert (1:1 ratio)
               </label>
-              <div className="flex space-x-2">
+              <div className="flex space-x-3">
                 <input
                   type="number"
                   value={convertAmount}
                   onChange={(e) => setConvertAmount(e.target.value)}
                   placeholder="Amount in EUN"
                   max={eunBalance}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 <Button onClick={handleConvert} loading={isPending} variant="primary">
                   Convert
                 </Button>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-2">
                 You will receive {convertAmount || "0"} NANUM tokens
               </p>
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+            <div className="bg-yellow-50 border border-yellow-200 p-5 rounded-xl shadow-sm">
               <p className="text-sm text-yellow-800">
                 💡 <strong>How it works:</strong> EunCoins are converted 1:1 to NanumCoins. 
                 The EunCoins are held in the donation pool for community funding.
@@ -166,11 +166,11 @@ export default function DonationInterface() {
 
         {/* Donation Tracking */}
         <Card>
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">🔍 Transparent Tracking</h3>
-          <div className="space-y-3">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="font-medium text-gray-900 mb-2">Recent Donations</h4>
-              <div className="space-y-2 text-sm">
+          <h3 className="text-xl font-semibold text-gray-900 mb-6">🔍 Transparent Tracking</h3>
+          <div className="space-y-5">
+            <div className="bg-gray-50 p-5 rounded-xl shadow-sm">
+              <h4 className="font-medium text-gray-900 mb-3">Recent Donations</h4>
+              <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Youth Education</span>
                   <span className="font-medium">+2,500 NANUM</span>
@@ -186,9 +186,9 @@ export default function DonationInterface() {
               </div>
             </div>
 
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h4 className="font-medium text-gray-900 mb-2">Total Community Impact</h4>
-              <div className="space-y-2 text-sm">
+            <div className="bg-green-50 p-5 rounded-xl shadow-sm">
+              <h4 className="font-medium text-gray-900 mb-3">Total Community Impact</h4>
+              <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Total Donations</span>
                   <span className="font-semibold text-green-600">140,800 NANUM</span>
@@ -209,38 +209,38 @@ export default function DonationInterface() {
 
       {/* Active Donation Projects */}
       <Card>
-        <h3 className="text-xl font-semibold text-gray-900 mb-4">🎯 Active Donation Projects</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <h3 className="text-xl font-semibold text-gray-900 mb-6">🎯 Active Donation Projects</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {donationProjects.map((project) => (
-            <div key={project.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
-              <div className="flex justify-between items-start mb-2">
+            <div key={project.id} className="border border-gray-200 rounded-xl p-5 hover:shadow-lg transition-shadow bg-white/50">
+              <div className="flex justify-between items-start mb-3">
                 <h4 className="font-medium text-gray-900">{project.title}</h4>
                 {project.urgent && (
-                  <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Urgent</span>
+                  <span className="bg-red-100 text-red-800 text-xs px-3 py-1 rounded-full font-medium">Urgent</span>
                 )}
               </div>
               
-              <p className="text-sm text-gray-600 mb-3">{project.description}</p>
+              <p className="text-sm text-gray-600 mb-4">{project.description}</p>
               
-              <div className="mb-3">
-                <div className="flex justify-between text-sm mb-1">
+              <div className="mb-4">
+                <div className="flex justify-between text-sm mb-2">
                   <span className="text-gray-600">Progress</span>
                   <span className="font-medium">{((project.raised / project.target) * 100).toFixed(1)}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div 
-                    className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                    className="bg-green-600 h-2.5 rounded-full transition-all duration-300"
                     style={{ width: `${(project.raised / project.target) * 100}%` }}
                   ></div>
                 </div>
-                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <div className="flex justify-between text-xs text-gray-500 mt-2">
                   <span>{project.raised.toLocaleString()} NANUM</span>
                   <span>{project.target.toLocaleString()} NANUM</span>
                 </div>
               </div>
 
               <div className="flex justify-between items-center">
-                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{project.category}</span>
+                <span className="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">{project.category}</span>
                 <Button size="sm" disabled={Number(nanumBalance) === 0}>
                   {Number(nanumBalance) === 0 ? "Get NANUM" : "Donate"}
                 </Button>

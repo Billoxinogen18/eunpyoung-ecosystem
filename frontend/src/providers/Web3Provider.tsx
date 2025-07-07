@@ -15,22 +15,22 @@ interface Props {
   children: ReactNode;
 }
 
-// Configure Sepolia with free RPC endpoints
+// Configure Sepolia with CORS-friendly RPC endpoints
 const sepoliaWithRPC = {
   ...sepolia,
   rpcUrls: {
     default: {
       http: [
-        'https://eth-sepolia.g.alchemy.com/v2/demo',
-        'https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-        'https://rpc.sepolia.org'
+        'https://rpc.sepolia.org',
+        'https://rpc2.sepolia.org',
+        'https://sepolia.gateway.tenderly.co'
       ]
     },
     public: {
       http: [
-        'https://eth-sepolia.g.alchemy.com/v2/demo',
-        'https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-        'https://rpc.sepolia.org'
+        'https://rpc.sepolia.org',
+        'https://rpc2.sepolia.org',
+        'https://sepolia.gateway.tenderly.co'
       ]
     }
   }
@@ -38,12 +38,13 @@ const sepoliaWithRPC = {
 
 const chains = [sepoliaWithRPC] as const;
 
+// Use a public RPC that supports CORS
 const wagmiConfig = getDefaultConfig({
   appName: "EunCoin Ecosystem",
   projectId: "12345678901234567890123456789012", // 32 char string
   chains,
   transports: {
-    [sepolia.id]: http('https://eth-sepolia.g.alchemy.com/v2/demo'),
+    [sepolia.id]: http('https://rpc.sepolia.org'),
   },
   ssr: true,
 });

@@ -58,7 +58,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
             </div>
           </motion.div>
 
-          {/* Navigation Tabs */}
+          {/* Navigation Tabs - Improved contrast */}
           <div className="hidden md:flex items-center space-x-2">
             {navigationItems.map((item, index) => {
               const IconComponent = item.icon;
@@ -71,7 +71,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                   className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ${
                     isActive
                       ? "text-white shadow-2xl"
-                      : "text-gray-300 hover:text-white hover:bg-white/10"
+                      : "text-gray-200 hover:text-white"
                   }`}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
@@ -98,14 +98,14 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                   {/* Content */}
                   <div className="relative flex items-center space-x-2">
                     <IconComponent size={18} />
-                    <span className="text-sm">{item.label}</span>
+                    <span className="text-sm font-bold">{item.label}</span>
                   </div>
                   
-                  {/* Hover Effect */}
+                  {/* Hover Effect - Improved visibility */}
                   {!isActive && (
                     <motion.div
                       className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl opacity-0`}
-                      whileHover={{ opacity: 0.1 }}
+                      whileHover={{ opacity: 0.2 }}
                       transition={{ duration: 0.2 }}
                     />
                   )}
@@ -125,9 +125,9 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Navigation - Improved contrast */}
       <motion.div
-        className="md:hidden bg-black/20 backdrop-blur-xl border-t border-white/10"
+        className="md:hidden bg-black/30 backdrop-blur-xl border-t border-white/10"
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: "auto" }}
         transition={{ duration: 0.3 }}
@@ -145,7 +145,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                   className={`relative p-4 rounded-2xl font-medium transition-all duration-300 ${
                     isActive
                       ? "text-white shadow-xl"
-                      : "text-gray-300 hover:text-white hover:bg-white/10"
+                      : "text-gray-200 hover:text-white hover:bg-white/15"
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -165,7 +165,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                   {/* Content */}
                   <div className="relative flex flex-col items-center space-y-1">
                     <IconComponent size={20} />
-                    <span className="text-xs">{item.label}</span>
+                    <span className="text-xs font-bold">{item.label}</span>
                   </div>
                 </motion.button>
               );

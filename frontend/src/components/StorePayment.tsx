@@ -112,34 +112,34 @@ export default function StorePayment() {
 
       {/* Payment Stats */}
       <Card>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center p-3 bg-green-50 rounded-lg">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+          <div className="text-center p-5 bg-green-50 rounded-xl shadow-sm">
             <div className="text-2xl font-bold text-green-600">{Number(eunBalance).toFixed(2)}</div>
-            <p className="text-sm text-gray-600">Available Balance</p>
+            <p className="text-sm font-medium text-gray-600">Available Balance</p>
           </div>
-          <div className="text-center p-3 bg-blue-50 rounded-lg">
+          <div className="text-center p-5 bg-blue-50 rounded-xl shadow-sm">
             <div className="text-2xl font-bold text-blue-600">23</div>
-            <p className="text-sm text-gray-600">Partner Stores</p>
+            <p className="text-sm font-medium text-gray-600">Partner Stores</p>
           </div>
-          <div className="text-center p-3 bg-purple-50 rounded-lg">
+          <div className="text-center p-5 bg-purple-50 rounded-xl shadow-sm">
             <div className="text-2xl font-bold text-purple-600">147</div>
-            <p className="text-sm text-gray-600">Total Purchases</p>
+            <p className="text-sm font-medium text-gray-600">Total Purchases</p>
           </div>
-          <div className="text-center p-3 bg-yellow-50 rounded-lg">
+          <div className="text-center p-5 bg-yellow-50 rounded-xl shadow-sm">
             <div className="text-2xl font-bold text-yellow-600">342</div>
-            <p className="text-sm text-gray-600">EUN Rewards Earned</p>
+            <p className="text-sm font-medium text-gray-600">EUN Rewards Earned</p>
           </div>
         </div>
       </Card>
 
       {/* Store Selection */}
       <Card>
-        <h3 className="text-xl font-semibold text-gray-900 mb-4">Select a Store</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h3 className="text-xl font-semibold text-gray-900 mb-6">Select a Store</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {stores.map((store) => (
             <motion.div
               key={store.id}
-              className={`border rounded-lg p-4 cursor-pointer transition-all ${
+              className={`border rounded-xl p-5 cursor-pointer transition-all ${
                 selectedStore?.id === store.id
                   ? "border-blue-500 bg-blue-50"
                   : "border-gray-200 hover:border-gray-300 hover:shadow-md"
@@ -148,19 +148,19 @@ export default function StorePayment() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="flex items-start space-x-3">
+              <div className="flex items-start space-x-4">
                 <div className="text-3xl">{store.image}</div>
                 <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center justify-between mb-2">
                     <h4 className="font-semibold text-gray-900">{store.name}</h4>
                     {store.acceptsOffline && (
-                      <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">
+                      <span className="text-xs bg-green-100 text-green-600 px-3 py-1 rounded-full font-medium">
                         Offline
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">{store.category}</p>
-                  <p className="text-xs text-gray-500 mb-3">{store.address}</p>
+                  <p className="text-sm text-gray-600 mb-3">{store.category}</p>
+                  <p className="text-xs text-gray-500 mb-4">{store.address}</p>
                   
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center space-x-1">
@@ -168,10 +168,10 @@ export default function StorePayment() {
                       <span className="font-medium">{store.rating}</span>
                     </div>
                     <div className="flex space-x-2">
-                      <span className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs">
+                      <span className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-medium">
                         {store.discount}% off
                       </span>
-                      <span className="bg-green-100 text-green-600 px-2 py-1 rounded text-xs">
+                      <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-medium">
                         {store.rewardRate}% rewards
                       </span>
                     </div>
@@ -191,14 +191,14 @@ export default function StorePayment() {
           transition={{ duration: 0.3 }}
         >
           <Card>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6">
               Pay at {selectedStore.name}
             </h3>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
                     Payment Amount (EUN)
                   </label>
                   <input
@@ -206,12 +206,12 @@ export default function StorePayment() {
                     value={paymentAmount}
                     onChange={(e) => setPaymentAmount(e.target.value)}
                     placeholder="Enter amount"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 {paymentAmount && (
-                  <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+                  <div className="bg-gray-50 p-5 rounded-xl shadow-sm space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Amount:</span>
                       <span className="font-medium">{paymentAmount} EUN</span>
@@ -240,17 +240,17 @@ export default function StorePayment() {
 
                 <Button 
                   onClick={handlePayment} 
-                  className="w-full"
+                  className="w-full py-3"
                   disabled={!paymentAmount || parseFloat(paymentAmount) <= 0}
                 >
                   {selectedStore.acceptsOffline ? "Generate QR Code" : "Pay Online"}
                 </Button>
               </div>
 
-              <div className="space-y-4">
-                <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-gray-900 mb-2">💳 Payment Methods</h4>
-                  <div className="space-y-2 text-sm">
+              <div className="space-y-5">
+                <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-5 rounded-xl shadow-sm">
+                  <h4 className="font-semibold text-gray-900 mb-3">💳 Payment Methods</h4>
+                  <div className="space-y-3 text-sm">
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       <span>QR Code Payment</span>
@@ -268,9 +268,9 @@ export default function StorePayment() {
                   </div>
                 </div>
 
-                <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-                  <h4 className="font-semibold text-gray-900 mb-2">🎁 Store Benefits</h4>
-                  <ul className="text-sm text-gray-700 space-y-1">
+                <div className="bg-yellow-50 border border-yellow-200 p-5 rounded-xl shadow-sm">
+                  <h4 className="font-semibold text-gray-900 mb-3">🎁 Store Benefits</h4>
+                  <ul className="text-sm text-gray-700 space-y-2">
                     <li>• {selectedStore.discount}% instant discount</li>
                     <li>• {selectedStore.rewardRate}% cashback in EUN</li>
                     <li>• Loyalty points accumulation</li>
