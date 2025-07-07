@@ -71,7 +71,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                   className={`relative px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ${
                     isActive
                       ? "text-white shadow-2xl"
-                      : "text-gray-200 hover:text-white"
+                      : "text-white hover:text-white"
                   }`}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
@@ -105,7 +105,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                   {!isActive && (
                     <motion.div
                       className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-2xl opacity-0`}
-                      whileHover={{ opacity: 0.2 }}
+                      whileHover={{ opacity: 0.4 }}
                       transition={{ duration: 0.2 }}
                     />
                   )}
@@ -145,7 +145,7 @@ export default function Navigation({ activeTab, setActiveTab }: NavigationProps)
                   className={`relative p-4 rounded-2xl font-medium transition-all duration-300 ${
                     isActive
                       ? "text-white shadow-xl"
-                      : "text-gray-200 hover:text-white hover:bg-white/15"
+                      : "text-white hover:text-white hover:bg-white/15"
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}

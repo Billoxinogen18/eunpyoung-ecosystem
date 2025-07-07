@@ -144,7 +144,7 @@ export default function DonationInterface() {
                   onChange={(e) => setConvertAmount(e.target.value)}
                   placeholder="Amount in EUN"
                   max={eunBalance}
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-gray-900"
                 />
                 <Button onClick={handleConvert} loading={isPending} variant="primary">
                   Convert
