@@ -15,6 +15,7 @@ const navigationItems = [
   { id: "activities", label: "Activities", icon: Activity, gradient: "from-orange-500 to-yellow-500", lightColor: "text-orange-50" },
   { id: "store", label: "Store Pay", icon: Store, gradient: "from-indigo-500 to-blue-500", lightColor: "text-indigo-50" },
   { id: "campaigns", label: "Campaigns", icon: Users, gradient: "from-pink-500 to-rose-500", lightColor: "text-pink-50" },
+  { id: "certificates", label: "Certificates", icon: Sparkles, gradient: "from-teal-500 to-green-500", lightColor: "text-teal-50" },
 ];
 
 export default function Navigation({ activeTab, setActiveTab }: NavigationProps) {

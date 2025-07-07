@@ -15,6 +15,7 @@ import ActivityRewards from "../components/ActivityRewards";
 import StorePayment from "../components/StorePayment";
 import Campaigns from "../components/Campaigns";
 import Card from "../components/ui/Card";
+import CertificateGallery from "../components/CertificateGallery";
 
 export default function Home() {
   const { isConnected, address, status } = useAccount();
@@ -302,6 +303,8 @@ export default function Home() {
         return <StorePayment />;
       case "campaigns":
         return <Campaigns />;
+      case "certificates":
+        return <CertificateGallery />;
       default:
         return <WalletDashboard />;
     }
